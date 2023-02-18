@@ -39,18 +39,29 @@ func (c *Client) GetInvoiceDetails(ctx context.Context, invoiceID string) (*Invo
 
 // DraftInvoice: draft an invoice given information.
 // Endpoint: POST /v2/invoicing/invoices
-func (c *Client) DraftInvoice(ctx context.Context, invoiceData InvoiceDetail, invoiceConfig InvoiceConfiguration) (*Invoice, error) {
-	payload := Invoice{
-		Detail: invoiceData,
-		Configuration: invoiceConfig,
-	}
-	req, err := c.NewRequest(ctx, "POST", fmt.Sprintf("%s%s", c.APIBase, "/v2/invoicing/invoices", ), payload)
+func (c *Client) DraftInvoice(ctx context.Context, invoiceData Invoice) (*Invoice, error) {
+	req, err := c.NewRequest(ctx, "POST", fmt.Sprintf("%s%s", c.APIBase, "/v2/invoicing/invoices", ), invoiceData)
 	invoice := &Invoice{}
 	if err != nil {
 		return invoice, err
 	}
 
 	if err = c.SendWithAuth(req, invoice); err != nil {
+		return invoice, err
+	}
+	return invoice, nil
+}
+
+// SendInvoice: sends an invoice given invoice ID
+// Endpoint: POST /v2/invoicing/invoices/{invoice_id}/send
+func (c *Client) SendInvoice(ctx context.Context, invoiceID string) (interface{}, error) {
+	req, err := c.NewRequest(ctx, "POST", fmt.Sprintf("%s%s%s%s", c.APIBase, "/v2/invoicing/invoices/", invoiceID, "/send"), nil)
+	invoice := interface{}
+	if err != nil {
+		return invoice, err
+	}
+
+	if err = c.SendWithAuth(req, nil); err != nil {
 		return invoice, err
 	}
 	return invoice, nil
