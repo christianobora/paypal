@@ -56,7 +56,7 @@ func (c *Client) DraftInvoice(ctx context.Context, invoiceData Invoice) (*Invoic
 // Endpoint: POST /v2/invoicing/invoices/{invoice_id}/send
 func (c *Client) SendInvoice(ctx context.Context, invoiceID string) (interface{}, error) {
 	req, err := c.NewRequest(ctx, "POST", fmt.Sprintf("%s%s%s%s", c.APIBase, "/v2/invoicing/invoices/", invoiceID, "/send"), nil)
-	invoice := interface{}
+	var invoice interface{}
 	if err != nil {
 		return invoice, err
 	}
